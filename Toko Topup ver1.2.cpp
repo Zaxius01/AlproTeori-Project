@@ -52,7 +52,7 @@ void mobilelegend(bool ascending, int id) {
         int no = 1;
         for (int i = 2; i >= 0; i--) {
         cout << left
-             << setw(5)  << no++ ;
+             << setw(5)  << no++ 
              << setw(15) << data[i].diamond
              << setw(10) << data[i].harga
              << endl;
@@ -221,7 +221,7 @@ void pubg(bool ascending, int id) {
     cout << "--------------------------------\n";
     if (ascending == true) {
     int no = 1;
-    for (int i = 6; i < 8; i++) {
+    for (int i = 6; i <= 8; i++) {
         cout << left
              << setw(5)  << no++
              << setw(15) << data[i].diamond
@@ -309,6 +309,90 @@ void lihatlist () {
     };
 }
 
+void cari(){
+    string keyword;
+    system("cls");
+
+    cout << "=== Cari berdasarkan nama game ===\n";
+    cout << "Masukkan nama game : \n";
+    cin.ignore();
+    getline(cin, keyword);
+
+    if(keyword == "Mobile Legend" || keyword == "mobile legend" || keyword == "MOBILE LEGEND"){
+        mobilelegend(true, -1);
+    }else if(keyword == "FREE FIRE" || keyword == "Free Fire" || keyword == "free fire"){
+        freefire(true, -1);
+    }else if(keyword == "PUBG" || keyword == "Pubg" || keyword == "pubg"){
+        pubg(true, -1);
+    }else {
+         cout << "Data Tidak Ditemukan"; 
+         system("pause");
+    }
+        
+
+}
+
+void history(){
+    cout << "===== Riwayat Pembelian ====\n";
+    ifstream file("riwayat.csv");
+
+    if(!file.is_open()){
+        cout << "Belum ada riwayat pembelian.\n";
+        system("pause");
+        return;
+    }
+
+    string riw;
+    int no = 1;
+    bool kondisi = false;
+
+    cout << left
+         << setw(5)  << "No"
+         << setw(20) << "Game"
+         << setw(15) << "ID Akun"
+         << setw(15) << "Diamond/UC"
+         << setw(10) << "Harga"
+         << endl;
+    cout << "-------------------------------------------------------\n";
+
+    while (getline(file, riw)){
+        if (riw.empty()) continue;
+        string cols[4];
+        int col = 0;
+        string temp = "";
+    
+        for (char c : riw) {
+            if (c == ',') {
+                cols[col++] = temp;
+                temp = "";
+            } else {
+                temp += c;
+            }
+        }
+        cols[col] = temp;
+    
+                cout << left
+             << setw(5)  << no++
+             << setw(20) << cols[0]
+             << setw(15) << cols[1]
+             << setw(15) << cols[2]
+             << setw(10) << cols[3]
+             << endl;
+    
+        kondisi = true;
+    }
+
+    file.close();
+
+    if(!kondisi){
+        cout << "Belum ada riwayat pembelian.\n";
+    }
+
+    cout << endl;
+    system("pause");
+
+}
+
 int main () {
     int pil;
     do
@@ -316,15 +400,15 @@ int main () {
     system("cls");
     cout << "Veteran Top up Store\n===== MENU =====\n1. Lihat List Semua Game\n2. Cari Game\n3. Lihat Riwayat Pembelian\n4. Exit\nMasukkan Pilihan : "; cin >> pil;
     switch (pil) {
-        case 1 :
+        case 1 : // cari game
         system("cls");
         lihatlist();
         break;
-        case 2 :
-
+        case 2 : // searching
+        cari();
         break;
-        case 3 :
-
+        case 3 : // history
+        history();
         break;
         case 4 :
         cout << "Terimakasih, sampai jumpa lagi di pembelian selanjutnya\n";
