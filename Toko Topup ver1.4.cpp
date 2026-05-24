@@ -8,6 +8,13 @@ struct Paket {
     int harga;
 };
 
+struct Riwayat {
+    string game;
+    string id;
+    int diamond;
+    int harga;
+};
+
 Paket data[9] =
 {
     {"Mobile Legend", 100, 15000},
@@ -131,7 +138,7 @@ void freefire(bool ascending, int id) {
     cout << "--------------------------------\n";
     if (ascending == true) {
     int no = 1;
-    for (int i = 3; i < 5; i++) {
+    for (int i = 3; i <= 5; i++) {
         cout << left
              << setw(5)  << no++
              << setw(15) << data[i].diamond
@@ -332,8 +339,9 @@ void cari(){
 
 }
 
-void history(){
-    cout << "===== Riwayat Pembelian ====\n";
+void history() {
+    system("cls");
+
     ifstream file("riwayat.csv");
 
     if(!file.is_open()){
@@ -342,9 +350,94 @@ void history(){
         return;
     }
 
-    string riw;
-    int no = 1;
-    bool kondisi = false;
+    Riwayat datahistory[100];
+    string line;
+
+    int jumlah = 0;
+
+    while(getline(file, line)) {
+
+        if(line.empty()) continue;
+
+        string cols[4];
+        string temp = "";
+        int col = 0;
+
+        for(char c : line) {
+
+            if(c == ',') {
+                cols[col++] = temp;
+                temp = "";
+            } else {
+                temp += c;
+            }
+
+        }
+
+        cols[col] = temp;
+
+        datahistory[jumlah].game = cols[0];
+        datahistory[jumlah].id = cols[1];
+        datahistory[jumlah].diamond = stoi(cols[2]);
+        datahistory[jumlah].harga = stoi(cols[3]);
+
+        jumlah++;
+    }
+
+    file.close();
+
+    if(jumlah == 0) {
+        cout << "Belum ada riwayat pembelian.\n";
+        system("pause");
+        return;
+    }
+
+    int mode;
+
+    cout << "=== Berdasarkan Harga ===\n";
+    cout << "1. Ascending\n";
+    cout << "2. Descending\n";
+    cout << "Pilih : ";
+    cin >> mode;
+
+    // BUBBLE SORT
+    for(int i = 0; i < jumlah - 1; i++) {
+
+        for(int j = 0; j < jumlah - i - 1; j++) {
+
+            bool tukar = false;
+
+            if(mode == 1) {
+
+                // ascending
+                if(datahistory[j].harga > datahistory[j + 1].harga) {
+                    tukar = true;
+                }
+
+            } else {
+
+                // descending
+                if(datahistory[j].harga < datahistory[j + 1].harga) {
+                    tukar = true;
+                }
+
+            }
+
+            if(tukar) {
+
+                Riwayat temp = datahistory[j];
+                datahistory[j] = datahistory[j + 1];
+                datahistory[j + 1] = temp;
+
+            }
+
+        }
+
+    }
+
+    system("cls");
+
+    cout << "===== Riwayat Pembelian =====\n\n";
 
     cout << left
          << setw(5)  << "No"
@@ -353,44 +446,23 @@ void history(){
          << setw(15) << "Diamond/UC"
          << setw(10) << "Harga"
          << endl;
-    cout << "-------------------------------------------------------\n";
 
-    while (getline(file, riw)){
-        if (riw.empty()) continue;
-        string cols[4];
-        int col = 0;
-        string temp = "";
-    
-        for (char c : riw) {
-            if (c == ',') {
-                cols[col++] = temp;
-                temp = "";
-            } else {
-                temp += c;
-            }
-        }
-        cols[col] = temp;
-    
-                cout << left
-             << setw(5)  << no++
-             << setw(20) << cols[0]
-             << setw(15) << cols[1]
-             << setw(15) << cols[2]
-             << setw(10) << cols[3]
+    cout << "-------------------------------------------------------------\n";
+
+    for(int i = 0; i < jumlah; i++) {
+
+        cout << left
+             << setw(5)  << i + 1
+             << setw(20) << datahistory[i].game
+             << setw(15) << datahistory[i].id
+             << setw(15) << datahistory[i].diamond
+             << setw(10) << datahistory[i].harga
              << endl;
-    
-        kondisi = true;
-    }
 
-    file.close();
-
-    if(!kondisi){
-        cout << "Belum ada riwayat pembelian.\n";
     }
 
     cout << endl;
     system("pause");
-
 }
 
 int main () {
